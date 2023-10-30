@@ -3,7 +3,7 @@
 Данный модуль поддерживает как синхронный, так и асинхронный способ взаимодействия с биллигом.
 ## Установка
 ```bash
-composer require smskin/billing
+composer require smskin/laravel-billing
 php artisan vendor:publish --provider="SMSkin\Billing\Providers\ServiceProvider"
 ```
 В результате появятся 
