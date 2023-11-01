@@ -13,7 +13,7 @@ abstract class EBulkTransfer extends BaseEvent
      * @param Billingable $sender
      * @param Collection<Payment> $payments
      */
-    public function __construct(protected Billingable $sender, protected Collection $payments)
+    public function __construct(public Billingable $sender, public Collection $payments)
     {
 
     }

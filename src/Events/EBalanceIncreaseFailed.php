@@ -8,24 +8,8 @@ use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 
 class EBalanceIncreaseFailed extends EBalanceIncrease
 {
-    public function __construct(protected string $operationId, protected Billingable $target, protected float $amount, protected AmountMustBeMoreThan0|NotUniqueOperationId $exception)
+    public function __construct(public string $operationId, public Billingable $target, public float $amount, public AmountMustBeMoreThan0|NotUniqueOperationId $exception)
     {
         parent::__construct($this->operationId, $this->target, $this->amount);
-    }
-
-    /**
-     * @return AmountMustBeMoreThan0|NotUniqueOperationId
-     */
-    public function getException(): AmountMustBeMoreThan0|NotUniqueOperationId
-    {
-        return $this->exception;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOperationId(): string
-    {
-        return $this->operationId;
     }
 }

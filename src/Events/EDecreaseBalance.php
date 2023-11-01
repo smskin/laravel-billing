@@ -6,15 +6,7 @@ use SMSkin\Billing\Contracts\Billingable;
 
 abstract class EDecreaseBalance
 {
-    public function __construct(protected string $operationId, protected Billingable $target, protected float $amount)
+    public function __construct(public string $operationId, public Billingable $target, public float $amount)
     {
-    }
-
-    /**
-     * @return string
-     */
-    public function getOperationId(): string
-    {
-        return $this->operationId;
     }
 }

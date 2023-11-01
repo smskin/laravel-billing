@@ -7,31 +7,7 @@ use SMSkin\LaravelSupport\BaseEvent;
 
 abstract class ETransfer extends BaseEvent
 {
-    public function __construct(protected string $operationId, protected Billingable $sender, protected Billingable $recipient, protected float $amount)
+    public function __construct(public string $operationId, public Billingable $sender, public Billingable $recipient, public float $amount)
     {
-    }
-
-    /**
-     * @return string
-     */
-    public function getOperationId(): string
-    {
-        return $this->operationId;
-    }
-
-    /**
-     * @return Billingable
-     */
-    public function getSender(): Billingable
-    {
-        return $this->sender;
-    }
-
-    /**
-     * @return Billingable
-     */
-    public function getRecipient(): Billingable
-    {
-        return $this->recipient;
     }
 }

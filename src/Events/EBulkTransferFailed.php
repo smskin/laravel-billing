@@ -17,7 +17,7 @@ class EBulkTransferFailed extends EBulkTransfer
      * @param Collection<Payment> $payments
      * @param InsufficientBalance|AmountMustBeMoreThan0|RecipientIsSender|NotUniqueOperationId $exception
      */
-    public function __construct(protected Billingable $sender, protected Collection $payments, protected InsufficientBalance|AmountMustBeMoreThan0|RecipientIsSender|NotUniqueOperationId $exception)
+    public function __construct(public Billingable $sender, public Collection $payments, public InsufficientBalance|AmountMustBeMoreThan0|RecipientIsSender|NotUniqueOperationId $exception)
     {
         parent::__construct($this->sender, $this->payments);
     }
