@@ -17,8 +17,7 @@ class CreateTransferOperation
     public function __construct(
         private readonly Billingable $sender,
         private readonly Collection $payments
-    )
-    {
+    ) {
     }
 
     public function execute(): void
@@ -34,7 +33,7 @@ class CreateTransferOperation
                 'amount' => $payment->getAmount(),
                 'description' => $payment->getDescription(),
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ];
         })->toArray());
     }

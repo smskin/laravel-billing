@@ -13,8 +13,7 @@ class CreateIncreaseBalanceOperation
         private readonly Billingable $target,
         private readonly float $amount,
         private readonly string|null $description = null
-    )
-    {
+    ) {
     }
 
     public function execute(): void
@@ -27,7 +26,7 @@ class CreateIncreaseBalanceOperation
             'amount' => $this->amount,
             'description' => $this->description,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
     }
 }

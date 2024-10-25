@@ -23,8 +23,7 @@ class Transfer
         private readonly Billingable $recipient,
         private readonly float $amount,
         private readonly string|null $description
-    )
-    {
+    ) {
     }
 
 
@@ -73,7 +72,7 @@ class Transfer
                     ->setOperationId($this->operationId)
                     ->setRecipient($this->recipient)
                     ->setAmount($this->amount)
-                    ->setDescription($this->description)
+                    ->setDescription($this->description),
             ])
         ))->execute();
     }
@@ -95,7 +94,7 @@ class Transfer
     private function checkSubjects(): void
     {
         if ($this->sender->isEqual($this->recipient)) {
-            throw new RecipientIsSender;
+            throw new RecipientIsSender();
         }
     }
 

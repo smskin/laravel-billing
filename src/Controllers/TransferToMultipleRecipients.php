@@ -26,8 +26,7 @@ class TransferToMultipleRecipients
     public function __construct(
         private readonly Billingable $sender,
         private readonly Collection $payments
-    )
-    {
+    ) {
     }
 
     /**
@@ -90,7 +89,7 @@ class TransferToMultipleRecipients
     {
         $this->payments->each(function (Payment $payment) {
             if ($this->sender->isEqual($payment->getRecipient())) {
-                throw new RecipientIsSender;
+                throw new RecipientIsSender();
             }
         });
     }

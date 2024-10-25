@@ -15,6 +15,6 @@ return [
          * - другое - asynchronous execution in another thread (horizon\supervisor)
          */
         'connection' => 'sync',
-        'queue' => 'billing'
-    ]
+        'queue' => 'billing',
+    ],
 ];

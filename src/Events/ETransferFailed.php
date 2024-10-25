@@ -12,6 +12,6 @@ class ETransferFailed extends ETransfer
 {
     public function __construct(public string $operationId, public Billingable $sender, public Billingable $recipient, public float $amount, public InsufficientBalance|AmountMustBeMoreThan0|RecipientIsSender|NotUniqueOperationId $exception)
     {
-        parent::__construct($this->operationId, $this->sender,$this->recipient, $this->amount);
+        parent::__construct($this->operationId, $this->sender, $this->recipient, $this->amount);
     }
 }

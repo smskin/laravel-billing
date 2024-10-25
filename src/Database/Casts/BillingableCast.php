@@ -17,7 +17,7 @@ class BillingableCast implements CastsAttributes
 
         list($subsystem, $type, $id) = explode('-', $value);
 
-        return (new BillingSubject)
+        return (new BillingSubject())
             ->setSubsystem($subsystem)
             ->setType($type)
             ->setId($id);

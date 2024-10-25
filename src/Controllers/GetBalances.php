@@ -2,10 +2,10 @@
 
 namespace SMSkin\Billing\Controllers;
 
-use SMSkin\Billing\Contracts\Billingable;
-use SMSkin\Billing\Models\Balance;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use SMSkin\Billing\Contracts\Billingable;
+use SMSkin\Billing\Models\Balance;
 
 class GetBalances
 {

@@ -2,8 +2,8 @@
 
 namespace SMSkin\Billing\Commands;
 
-use SMSkin\Billing\Models\BillingSubject;
 use Illuminate\Console\Command;
+use SMSkin\Billing\Models\BillingSubject;
 
 class GetBalance extends Command
 {
@@ -23,7 +23,7 @@ class GetBalance extends Command
 
     public function handle()
     {
-        $subject = (new BillingSubject)
+        $subject = (new BillingSubject())
             ->setSubsystem($this->ask('Billing subsystem', 'local'))
             ->setType($this->ask('Billing type', 'user'))
             ->setId($this->ask('Billing id'));

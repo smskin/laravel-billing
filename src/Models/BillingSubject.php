@@ -15,17 +15,17 @@ class BillingSubject implements Billingable
 
     protected string $id;
 
-    function getBillingSubsystem(): string
+    public function getBillingSubsystem(): string
     {
         return $this->subsystem;
     }
 
-    function getBillingType(): string
+    public function getBillingType(): string
     {
         return $this->type;
     }
 
-    function getBillingId(): string
+    public function getBillingId(): string
     {
         return $this->id;
     }

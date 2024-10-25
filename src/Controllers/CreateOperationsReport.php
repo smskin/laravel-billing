@@ -2,20 +2,19 @@
 
 namespace SMSkin\Billing\Controllers;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use SMSkin\Billing\Database\BillingOperation;
 use SMSkin\Billing\Models\Report;
 use SMSkin\Billing\Models\ReportMeta;
 use SMSkin\Billing\Models\ReportOperation;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 class CreateOperationsReport
 {
     public function __construct(
         private readonly int $page,
         private readonly int $perPage
-    )
-    {
+    ) {
     }
 
     public function execute(): Report
@@ -40,7 +39,7 @@ class CreateOperationsReport
                 'recipient',
                 'amount',
                 'description',
-                'created_at'
+                'created_at',
             ],
             'page',
             $this->page

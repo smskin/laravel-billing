@@ -2,13 +2,13 @@
 
 namespace SMSkin\Billing\Commands;
 
+use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use SMSkin\Billing\Billing;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 use SMSkin\Billing\Models\BillingSubject;
-use Illuminate\Console\Command;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 
 class DecreaseBalance extends Command
@@ -30,7 +30,7 @@ class DecreaseBalance extends Command
     public function handle()
     {
         $operationId = $this->ask('Operation id', Str::uuid()->toString());
-        $subject = (new BillingSubject)
+        $subject = (new BillingSubject())
             ->setSubsystem($this->ask('Billing subsystem', 'local'))
             ->setType($this->ask('Billing type', 'user'))
             ->setId($this->ask('Billing id'));

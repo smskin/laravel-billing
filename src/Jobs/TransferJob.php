@@ -20,8 +20,7 @@ class TransferJob extends BillingJob
         private readonly Billingable $recipient,
         private readonly float $amount,
         private readonly string|null $description
-    )
-    {
+    ) {
         parent::__construct();
     }
 

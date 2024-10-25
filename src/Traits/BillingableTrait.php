@@ -2,19 +2,19 @@
 
 namespace SMSkin\Billing\Traits;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SMSkin\Billing\Contracts\Billingable;
-use Illuminate\Database\Query\Builder;
 use SMSkin\Billing\Database\BillingOperation;
 
 trait BillingableTrait
 {
-    abstract function getBillingSubsystem(): string;
+    abstract public function getBillingSubsystem(): string;
 
-    abstract function getBillingType(): string;
+    abstract public function getBillingType(): string;
 
-    abstract function getBillingId(): string;
+    abstract public function getBillingId(): string;
 
     public function getIdentity(): string
     {

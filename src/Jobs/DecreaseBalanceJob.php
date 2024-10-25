@@ -2,6 +2,7 @@
 
 namespace SMSkin\Billing\Jobs;
 
+use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Controllers\DecreaseBalance;
 use SMSkin\Billing\Events\EDecreaseBalanceCompleted;
@@ -9,7 +10,6 @@ use SMSkin\Billing\Events\EDecreaseBalanceFailed;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
-use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 
 class DecreaseBalanceJob extends BillingJob
@@ -19,8 +19,7 @@ class DecreaseBalanceJob extends BillingJob
         private readonly Billingable $target,
         private readonly float $amount,
         private readonly string|null $description
-    )
-    {
+    ) {
         parent::__construct();
     }
 

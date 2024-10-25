@@ -16,8 +16,7 @@ class IncreaseBalanceJob extends BillingJob
         private readonly Billingable $target,
         private readonly float $amount,
         private readonly string|null $description
-    )
-    {
+    ) {
         parent::__construct();
     }
 

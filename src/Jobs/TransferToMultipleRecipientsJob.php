@@ -23,8 +23,7 @@ class TransferToMultipleRecipientsJob extends BillingJob
     public function __construct(
         public readonly Billingable $sender,
         public readonly Collection $payments
-    )
-    {
+    ) {
         parent::__construct();
     }
 

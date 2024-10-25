@@ -2,9 +2,9 @@
 
 namespace SMSkin\Billing\Models;
 
+use Carbon\Carbon;
 use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Enums\OperationEnum;
-use Carbon\Carbon;
 
 class ReportOperation
 {

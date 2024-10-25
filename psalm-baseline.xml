@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.26.1@d747f6500b38ac4f7dfc5edbcae6e4b637d7add0">
+  <file src="src/Actions/CreateTransferOperation.php">
+    <InvalidArgument>
+      <code><![CDATA[$this->payments->map(function (Payment $payment) {
+            $recipient = $payment->getRecipient();
+
+            return [
+                'operation' => OperationEnum::TRANSFER,
+                'operation_id' => $payment->getOperationId(),
+                'sender' => $this->sender->getIdentity(),
+                'recipient' => $recipient->getIdentity(),
+                'amount' => $payment->getAmount(),
+                'description' => $payment->getDescription(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        })->toArray()]]></code>
+    </InvalidArgument>
+    <InvalidTemplateParam>
+      <code><![CDATA[$this->payments->map(function (Payment $payment) {
+            $recipient = $payment->getRecipient();
+
+            return [
+                'operation' => OperationEnum::TRANSFER,
+                'operation_id' => $payment->getOperationId(),
+                'sender' => $this->sender->getIdentity(),
+                'recipient' => $recipient->getIdentity(),
+                'amount' => $payment->getAmount(),
+                'description' => $payment->getDescription(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        })]]></code>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Billing.php">
+    <InvalidArgument>
+      <code><![CDATA[$accounts]]></code>
+    </InvalidArgument>
+    <InvalidTemplateParam>
+      <code><![CDATA[Collection<Balance>]]></code>
+      <code><![CDATA[Collection<Payment>]]></code>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Balance>]]></code>
+      <code><![CDATA[Collection<Payment>]]></code>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </MissingTemplateParam>
+    <PossiblyInvalidDocblockTag>
+      <code><![CDATA[@var Collection<Billingable>]]></code>
+    </PossiblyInvalidDocblockTag>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[createOperationsReport]]></code>
+      <code><![CDATA[decreaseBalanceAsync]]></code>
+      <code><![CDATA[getBalances]]></code>
+      <code><![CDATA[increaseBalanceAsync]]></code>
+      <code><![CDATA[transferAsync]]></code>
+      <code><![CDATA[transferToMultipleRecipients]]></code>
+      <code><![CDATA[transferToMultipleRecipientsAsync]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Commands/DecreaseBalance.php">
+    <UnusedClass>
+      <code><![CDATA[DecreaseBalance]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Commands/GetBalance.php">
+    <UnusedClass>
+      <code><![CDATA[GetBalance]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Commands/IncreaseBalance.php">
+    <UnusedClass>
+      <code><![CDATA[IncreaseBalance]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Commands/Transfer.php">
+    <UnusedClass>
+      <code><![CDATA[Transfer]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Controllers/CreateOperationsReport.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[collect($operations->items())->map(static function (BillingOperation $operation) {
+            return (new ReportOperation())
+                ->setOperationId($operation->getAttribute('operation_id'))
+                ->setOperation($operation->getAttribute('operation'))
+                ->setSender($operation->getAttribute('sender'))
+                ->setRecipient($operation->getAttribute('recipient'))
+                ->setAmount($operation->getAttribute('amount'))
+                ->setDescription($operation->getAttribute('description'))
+                ->setCreatedAt($operation->getAttribute('created_at'));
+        })]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[Collection<ReportOperation>]]></code>
+    </InvalidReturnType>
+    <InvalidTemplateParam>
+      <code><![CDATA[Collection<ReportOperation>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<ReportOperation>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Controllers/GetBalances.php">
+    <InvalidNullableReturnType>
+      <code><![CDATA[object]]></code>
+    </InvalidNullableReturnType>
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->accounts->map(static function (Billingable $account) use ($balances) {
+            $hash = $account->getIdentityHash();
+            return (new Balance())
+                ->setAccount($account)
+                ->setBalance($balances->$hash);
+        })]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[Collection<Balance>]]></code>
+    </InvalidReturnType>
+    <InvalidTemplateParam>
+      <code><![CDATA[$this->accounts->map(static function (Billingable $account) use ($balances) {
+            $hash = $account->getIdentityHash();
+            return (new Balance())
+                ->setAccount($account)
+                ->setBalance($balances->$hash);
+        })]]></code>
+      <code><![CDATA[Collection<Balance>]]></code>
+      <code><![CDATA[Collection<Billingable>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Balance>]]></code>
+      <code><![CDATA[Collection<Billingable>]]></code>
+    </MissingTemplateParam>
+    <NullableReturnStatement>
+      <code><![CDATA[$query->first()]]></code>
+    </NullableReturnStatement>
+  </file>
+  <file src="src/Controllers/Transfer.php">
+    <InvalidArgument>
+      <code><![CDATA[collect([
+                (new Payment())
+                    ->setOperationId($this->operationId)
+                    ->setRecipient($this->recipient)
+                    ->setAmount($this->amount)
+                    ->setDescription($this->description),
+            ])]]></code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Controllers/TransferToMultipleRecipients.php">
+    <InvalidTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Database/BillingOperation.php">
+    <InvalidTemplateParam>
+      <code><![CDATA[BillingOperation]]></code>
+    </InvalidTemplateParam>
+  </file>
+  <file src="src/Database/Casts/BillingableCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Events/EBalanceIncrease.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$amount]]></code>
+      <code><![CDATA[$operationId]]></code>
+      <code><![CDATA[$target]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Events/EBalanceIncreaseFailed.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$exception]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Events/EBulkTransfer.php">
+    <InvalidTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </MissingTemplateParam>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$payments]]></code>
+      <code><![CDATA[$sender]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Events/EBulkTransferFailed.php">
+    <InvalidTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </MissingTemplateParam>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$exception]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Events/EDecreaseBalance.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$amount]]></code>
+      <code><![CDATA[$operationId]]></code>
+      <code><![CDATA[$target]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Events/EDecreaseBalanceFailed.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$exception]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Events/ETransfer.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$amount]]></code>
+      <code><![CDATA[$operationId]]></code>
+      <code><![CDATA[$recipient]]></code>
+      <code><![CDATA[$sender]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Events/ETransferFailed.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$exception]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Exceptions/AmountMustBeMoreThan0.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$amount]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Exceptions/NotUniqueOperationId.php">
+    <NullArgument>
+      <code><![CDATA[null]]></code>
+    </NullArgument>
+  </file>
+  <file src="src/Jobs/DecreaseBalanceJob.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[handle]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Jobs/IncreaseBalanceJob.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[handle]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Jobs/TransferJob.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[handle]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Jobs/TransferToMultipleRecipientsJob.php">
+    <InvalidTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Payment>]]></code>
+    </MissingTemplateParam>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[handle]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Models/Balance.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[getAccount]]></code>
+      <code><![CDATA[getBalance]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Models/Report.php">
+    <InvalidTemplateParam>
+      <code><![CDATA[Collection]]></code>
+      <code><![CDATA[Collection<ReportOperation>]]></code>
+      <code><![CDATA[Collection<ReportOperation>]]></code>
+    </InvalidTemplateParam>
+    <MissingTemplateParam>
+      <code><![CDATA[Collection]]></code>
+      <code><![CDATA[Collection<ReportOperation>]]></code>
+      <code><![CDATA[Collection<ReportOperation>]]></code>
+    </MissingTemplateParam>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[getMeta]]></code>
+      <code><![CDATA[getOperations]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Models/ReportMeta.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[getCurrentPage]]></code>
+      <code><![CDATA[getItemsCount]]></code>
+      <code><![CDATA[getLastPage]]></code>
+      <code><![CDATA[getPerPage]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Models/ReportOperation.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[getAmount]]></code>
+      <code><![CDATA[getCreatedAt]]></code>
+      <code><![CDATA[getDescription]]></code>
+      <code><![CDATA[getOperation]]></code>
+      <code><![CDATA[getOperationId]]></code>
+      <code><![CDATA[getRecipient]]></code>
+      <code><![CDATA[getSender]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Providers/ServiceProvider.php">
+    <UnusedClass>
+      <code><![CDATA[ServiceProvider]]></code>
+    </UnusedClass>
+  </file>
+</files>

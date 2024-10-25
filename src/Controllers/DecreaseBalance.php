@@ -2,12 +2,12 @@
 
 namespace SMSkin\Billing\Controllers;
 
+use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\Billing\Actions\CreateDecreaseBalanceOperation;
 use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
-use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 use SMSkin\LaravelSupport\Traits\RedisMutexTrait;
 
@@ -20,8 +20,7 @@ class DecreaseBalance
         private readonly Billingable $target,
         private readonly float $amount,
         private readonly string|null $description
-    )
-    {
+    ) {
     }
 
     /**

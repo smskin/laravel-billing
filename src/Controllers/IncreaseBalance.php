@@ -2,11 +2,11 @@
 
 namespace SMSkin\Billing\Controllers;
 
+use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\Billing\Actions\CreateIncreaseBalanceOperation;
 use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
-use Illuminate\Database\UniqueConstraintViolationException;
 
 class IncreaseBalance
 {
@@ -15,8 +15,7 @@ class IncreaseBalance
         private readonly Billingable $target,
         private readonly float $amount,
         private readonly string|null $description
-    )
-    {
+    ) {
     }
 
     /**
