@@ -15,11 +15,12 @@ use SMSkin\LaravelSupport\Exceptions\MutexException;
 class TransferJob extends BillingJob
 {
     public function __construct(
-        private readonly string $operationId,
-        private readonly Billingable $sender,
-        private readonly Billingable $recipient,
-        private readonly float $amount,
-        private readonly string|null $description
+        public readonly string $operationId,
+        public readonly Billingable $sender,
+        public readonly Billingable $recipient,
+        public readonly float $amount,
+        public readonly bool $allowCredit,
+        public readonly string|null $description
     ) {
         parent::__construct();
     }
@@ -32,6 +33,7 @@ class TransferJob extends BillingJob
                 $this->sender,
                 $this->recipient,
                 $this->amount,
+                $this->allowCredit,
                 $this->description
             ))->execute();
             $this->registerCompletedEvent();

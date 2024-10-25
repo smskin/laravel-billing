@@ -67,14 +67,14 @@ class Billing
      * @throws Exceptions\InsufficientBalance
      * @throws Exceptions\RecipientIsSender
      */
-    public function transfer(string $operationId, Billingable $sender, Billingable $recipient, float $amount, string|null $description = null): void
+    public function transfer(string $operationId, Billingable $sender, Billingable $recipient, float $amount, bool $allowCredit = false, string|null $description = null): void
     {
-        (new Transfer($operationId, $sender, $recipient, $amount, $description))->execute();
+        (new Transfer($operationId, $sender, $recipient, $amount, $allowCredit, $description))->execute();
     }
 
-    public function transferAsync(string $operationId, Billingable $sender, Billingable $recipient, float $amount, string|null $description = null): void
+    public function transferAsync(string $operationId, Billingable $sender, Billingable $recipient, float $amount, bool $allowCredit = false, string|null $description = null): void
     {
-        dispatch((new TransferJob($operationId, $sender, $recipient, $amount, $description)));
+        dispatch((new TransferJob($operationId, $sender, $recipient, $amount, $allowCredit, $description)));
     }
 
     /**

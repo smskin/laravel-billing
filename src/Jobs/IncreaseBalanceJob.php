@@ -12,10 +12,10 @@ use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 class IncreaseBalanceJob extends BillingJob
 {
     public function __construct(
-        private readonly string $operationId,
-        private readonly Billingable $target,
-        private readonly float $amount,
-        private readonly string|null $description
+        public readonly string $operationId,
+        public readonly Billingable $target,
+        public readonly float $amount,
+        public readonly string|null $description
     ) {
         parent::__construct();
     }

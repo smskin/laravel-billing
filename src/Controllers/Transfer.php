@@ -22,6 +22,7 @@ class Transfer
         private readonly Billingable $sender,
         private readonly Billingable $recipient,
         private readonly float $amount,
+        private readonly bool $allowCredit,
         private readonly string|null $description
     ) {
     }
@@ -83,7 +84,7 @@ class Transfer
     private function checkBalance(): void
     {
         $balance = $this->sender->getBalance();
-        if ($balance < $this->amount) {
+        if (!$this->allowCredit && $balance < $this->amount) {
             throw new InsufficientBalance($balance, $this->amount);
         }
     }
