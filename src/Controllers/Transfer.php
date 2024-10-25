@@ -2,15 +2,14 @@
 
 namespace SMSkin\Billing\Controllers;
 
+use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\Billing\Actions\CreateTransferOperation;
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 use SMSkin\Billing\Exceptions\RecipientIsSender;
-use SMSkin\Billing\Requests\CreateTransferOperationRequest;
-use SMSkin\Billing\Requests\Models\Payment;
-use SMSkin\Billing\Requests\TransferRequest;
-use Illuminate\Database\UniqueConstraintViolationException;
+use SMSkin\Billing\Models\Payment;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 use SMSkin\LaravelSupport\Traits\RedisMutexTrait;
 
@@ -18,7 +17,13 @@ class Transfer
 {
     use RedisMutexTrait;
 
-    public function __construct(protected TransferRequest $request)
+    public function __construct(
+        private readonly string $operationId,
+        private readonly Billingable $sender,
+        private readonly Billingable $recipient,
+        private readonly float $amount,
+        private readonly string|null $description
+    )
     {
     }
 
@@ -32,7 +37,7 @@ class Transfer
      */
     public function execute(): void
     {
-        $mutex = $this->createMutex($this->request->getSender()->getIdentityHash());
+        $mutex = $this->createMutex($this->sender->getIdentityHash());
         try {
             $this->process();
         } finally {
@@ -55,22 +60,21 @@ class Transfer
             $this->checkBalance();
             $this->createBillingOperation();
         } catch (UniqueConstraintViolationException $exception) {
-            throw new NotUniqueOperationId($this->request->getOperationId(), $exception);
+            throw new NotUniqueOperationId($this->operationId, $exception);
         }
     }
 
     private function createBillingOperation(): void
     {
         (new CreateTransferOperation(
-            (new CreateTransferOperationRequest)
-                ->setSender($this->request->getSender())
-                ->setPayments(collect([
-                    (new Payment())
-                        ->setOperationId($this->request->getOperationId())
-                        ->setRecipient($this->request->getRecipient())
-                        ->setAmount($this->request->getAmount())
-                        ->setDescription($this->request->getDescription())
-                ]))
+            $this->sender,
+            collect([
+                (new Payment())
+                    ->setOperationId($this->operationId)
+                    ->setRecipient($this->recipient)
+                    ->setAmount($this->amount)
+                    ->setDescription($this->description)
+            ])
         ))->execute();
     }
 
@@ -79,10 +83,9 @@ class Transfer
      */
     private function checkBalance(): void
     {
-        $balance = $this->request->getSender()->getBalance();
-        $amount = $this->request->getAmount();
-        if ($balance < $amount) {
-            throw new InsufficientBalance($balance, $amount);
+        $balance = $this->sender->getBalance();
+        if ($balance < $this->amount) {
+            throw new InsufficientBalance($balance, $this->amount);
         }
     }
 
@@ -91,7 +94,7 @@ class Transfer
      */
     private function checkSubjects(): void
     {
-        if ($this->request->getSender()->isEqual($this->request->getRecipient())) {
+        if ($this->sender->isEqual($this->recipient)) {
             throw new RecipientIsSender;
         }
     }
@@ -101,9 +104,8 @@ class Transfer
      */
     private function checkAmount(): void
     {
-        $amount = $this->request->getAmount();
-        if ($amount <= 0) {
-            throw new AmountMustBeMoreThan0($amount);
+        if ($this->amount <= 0) {
+            throw new AmountMustBeMoreThan0($this->amount);
         }
     }
 }

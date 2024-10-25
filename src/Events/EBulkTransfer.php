@@ -2,9 +2,9 @@
 
 namespace SMSkin\Billing\Events;
 
-use SMSkin\Billing\Contracts\Billingable;
-use SMSkin\Billing\Requests\Models\Payment;
 use Illuminate\Support\Collection;
+use SMSkin\Billing\Contracts\Billingable;
+use SMSkin\Billing\Models\Payment;
 use SMSkin\LaravelSupport\BaseEvent;
 
 abstract class EBulkTransfer extends BaseEvent

@@ -9,7 +9,6 @@ use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 use SMSkin\Billing\Exceptions\RecipientIsSender;
 use SMSkin\Billing\Models\BillingSubject;
-use SMSkin\Billing\Requests\TransferRequest;
 use Illuminate\Console\Command;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 
@@ -48,11 +47,10 @@ class Transfer extends Command
 
         try {
             (new Billing())->transfer(
-                (new TransferRequest())
-                    ->setOperationId($operationId)
-                    ->setSender($sender)
-                    ->setRecipient($recipient)
-                    ->setAmount($this->ask('Amount'))
+                $operationId,
+                $sender,
+                $recipient,
+                $this->ask('Amount')
             );
         } catch (RecipientIsSender) {
             $this->error('The recipient is the sender of the payment');

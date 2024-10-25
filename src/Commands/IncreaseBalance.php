@@ -7,7 +7,6 @@ use SMSkin\Billing\Billing;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 use SMSkin\Billing\Models\BillingSubject;
-use SMSkin\Billing\Requests\BalanceOperationRequest;
 use Illuminate\Console\Command;
 
 class IncreaseBalance extends Command
@@ -38,10 +37,9 @@ class IncreaseBalance extends Command
 
         try {
             (new Billing)->increaseBalance(
-                (new BalanceOperationRequest())
-                    ->setOperationId($operationId)
-                    ->setTarget($subject)
-                    ->setAmount($this->ask('Amount'))
+                $operationId,
+                $subject,
+                $this->ask('Amount')
             );
         } catch (AmountMustBeMoreThan0) {
             $this->error('Amount must be more than 0');

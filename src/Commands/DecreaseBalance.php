@@ -8,7 +8,6 @@ use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 use SMSkin\Billing\Models\BillingSubject;
-use SMSkin\Billing\Requests\BalanceOperationRequest;
 use Illuminate\Console\Command;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 
@@ -40,10 +39,9 @@ class DecreaseBalance extends Command
 
         try {
             (new Billing())->decreaseBalance(
-                (new BalanceOperationRequest())
-                    ->setOperationId($operationId)
-                    ->setTarget($subject)
-                    ->setAmount($this->ask('Amount'))
+                $operationId,
+                $subject,
+                $this->ask('Amount')
             );
         } catch (InsufficientBalance $exception) {
             $this->error('Insufficient funds in the account (Current balance: ' . $exception->getBalance() . ', amount: ' . $exception->getAmount() . ')');

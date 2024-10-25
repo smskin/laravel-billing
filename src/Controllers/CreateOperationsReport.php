@@ -6,13 +6,15 @@ use SMSkin\Billing\Database\BillingOperation;
 use SMSkin\Billing\Models\Report;
 use SMSkin\Billing\Models\ReportMeta;
 use SMSkin\Billing\Models\ReportOperation;
-use SMSkin\Billing\Requests\CreateOperationsReportRequest;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class CreateOperationsReport
 {
-    public function __construct(protected CreateOperationsReportRequest $request)
+    public function __construct(
+        private readonly int $page,
+        private readonly int $perPage
+    )
     {
     }
 
@@ -29,7 +31,7 @@ class CreateOperationsReport
     {
         /** @noinspection UnknownColumnInspection */
         return BillingOperation::query()->paginate(
-            $this->request->getPerPage(),
+            $this->perPage,
             [
                 'id',
                 'operation_id',
@@ -41,7 +43,7 @@ class CreateOperationsReport
                 'created_at'
             ],
             'page',
-            $this->request->getPage()
+            $this->page
         );
     }
 

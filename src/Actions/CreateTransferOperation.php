@@ -2,28 +2,34 @@
 
 namespace SMSkin\Billing\Actions;
 
+use Illuminate\Support\Collection;
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Database\BillingOperation;
 use SMSkin\Billing\Enums\OperationEnum;
-use SMSkin\Billing\Requests\CreateTransferOperationRequest;
-use SMSkin\Billing\Requests\Models\Payment;
+use SMSkin\Billing\Models\Payment;
 
 class CreateTransferOperation
 {
-    public function __construct(protected CreateTransferOperationRequest $request)
+    /**
+     * @param Billingable $sender
+     * @param Collection<Payment> $payments
+     */
+    public function __construct(
+        private readonly Billingable $sender,
+        private readonly Collection $payments
+    )
     {
     }
 
     public function execute(): void
     {
-        $sender = $this->request->getSender();
-
-        BillingOperation::query()->insert($this->request->getPayments()->map(static function (Payment $payment) use ($sender) {
+        BillingOperation::query()->insert($this->payments->map(function (Payment $payment) {
             $recipient = $payment->getRecipient();
 
             return [
                 'operation' => OperationEnum::TRANSFER,
                 'operation_id' => $payment->getOperationId(),
-                'sender' => $sender->getIdentity(),
+                'sender' => $this->sender->getIdentity(),
                 'recipient' => $recipient->getIdentity(),
                 'amount' => $payment->getAmount(),
                 'description' => $payment->getDescription(),

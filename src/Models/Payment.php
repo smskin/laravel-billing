@@ -1,44 +1,41 @@
 <?php
 
-namespace SMSkin\Billing\Requests;
+namespace SMSkin\Billing\Models;
 
 use SMSkin\Billing\Contracts\Billingable;
-use SMSkin\Billing\Traits\RoundTrait;
 
-class BalanceOperationRequest
+class Payment
 {
-    use RoundTrait;
-
     protected string $operationId;
-    protected Billingable $target;
+    protected Billingable $recipient;
     protected float $amount;
     protected string|null $description = null;
 
     /**
-     * @param Billingable $target
-     * @return BalanceOperationRequest
+     * @param Billingable $recipient
+     * @return Payment
      */
-    public function setTarget(Billingable $target): self
+    public function setRecipient(Billingable $recipient): self
     {
-        $this->target = $target;
+        $this->recipient = $recipient;
         return $this;
     }
 
     /**
      * @return Billingable
      */
-    public function getTarget(): Billingable
+    public function getRecipient(): Billingable
     {
-        return $this->target;
+        return $this->recipient;
     }
 
     /**
      * @param float $amount
-     * @return BalanceOperationRequest
+     * @return Payment
      */
     public function setAmount(float $amount): self
     {
-        $this->amount = $this->round($amount);
+        $this->amount = $amount;
         return $this;
     }
 
@@ -52,7 +49,7 @@ class BalanceOperationRequest
 
     /**
      * @param string $operationId
-     * @return BalanceOperationRequest
+     * @return Payment
      */
     public function setOperationId(string $operationId): self
     {
@@ -70,7 +67,7 @@ class BalanceOperationRequest
 
     /**
      * @param string|null $description
-     * @return BalanceOperationRequest
+     * @return Payment
      */
     public function setDescription(string|null $description): self
     {

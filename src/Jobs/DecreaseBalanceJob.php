@@ -2,19 +2,24 @@
 
 namespace SMSkin\Billing\Jobs;
 
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Controllers\DecreaseBalance;
 use SMSkin\Billing\Events\EDecreaseBalanceCompleted;
 use SMSkin\Billing\Events\EDecreaseBalanceFailed;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
-use SMSkin\Billing\Requests\BalanceOperationRequest;
 use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 
 class DecreaseBalanceJob extends BillingJob
 {
-    public function __construct(protected BalanceOperationRequest $request)
+    public function __construct(
+        private readonly string $operationId,
+        private readonly Billingable $target,
+        private readonly float $amount,
+        private readonly string|null $description
+    )
     {
         parent::__construct();
     }
@@ -22,18 +27,18 @@ class DecreaseBalanceJob extends BillingJob
     public function handle(): void
     {
         try {
-            (new DecreaseBalance($this->request))->execute();
+            (new DecreaseBalance($this->operationId, $this->target, $this->amount, $this->description))->execute();
 
             event(new EDecreaseBalanceCompleted(
-                $this->request->getOperationId(),
-                $this->request->getTarget(),
-                $this->request->getAmount()
+                $this->operationId,
+                $this->target,
+                $this->amount
             ));
         } catch (InsufficientBalance|AmountMustBeMoreThan0|UniqueConstraintViolationException|NotUniqueOperationId $exception) {
             event(new EDecreaseBalanceFailed(
-                $this->request->getOperationId(),
-                $this->request->getTarget(),
-                $this->request->getAmount(),
+                $this->operationId,
+                $this->target,
+                $this->amount,
                 $exception
             ));
         } catch (MutexException) {

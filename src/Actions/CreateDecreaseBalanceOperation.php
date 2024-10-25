@@ -2,27 +2,30 @@
 
 namespace SMSkin\Billing\Actions;
 
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Database\BillingOperation;
 use SMSkin\Billing\Enums\OperationEnum;
-use SMSkin\Billing\Requests\BalanceOperationRequest;
 
 class CreateDecreaseBalanceOperation
 {
-    public function __construct(protected BalanceOperationRequest $request)
+    public function __construct(
+        private readonly string $operationId,
+        private readonly Billingable $target,
+        private readonly float $amount,
+        private readonly string|null $description
+    )
     {
     }
 
     public function execute(): void
     {
-        $target = $this->request->getTarget();
-
         BillingOperation::query()->insert([
             'operation' => OperationEnum::DECREASE,
-            'operation_id' => $this->request->getOperationId(),
-            'sender' => $target->getIdentity(),
+            'operation_id' => $this->operationId,
+            'sender' => $this->target->getIdentity(),
             'recipient' => null,
-            'amount' => $this->request->getAmount(),
-            'description' => $this->request->getDescription(),
+            'amount' => $this->amount,
+            'description' => $this->description,
             'created_at' => now(),
             'updated_at' => now()
         ]);

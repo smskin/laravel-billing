@@ -2,16 +2,21 @@
 
 namespace SMSkin\Billing\Jobs;
 
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Controllers\IncreaseBalance;
 use SMSkin\Billing\Events\EBalanceIncreaseCompleted;
 use SMSkin\Billing\Events\EBalanceIncreaseFailed;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
-use SMSkin\Billing\Requests\BalanceOperationRequest;
 
 class IncreaseBalanceJob extends BillingJob
 {
-    public function __construct(protected BalanceOperationRequest $request)
+    public function __construct(
+        private readonly string $operationId,
+        private readonly Billingable $target,
+        private readonly float $amount,
+        private readonly string|null $description
+    )
     {
         parent::__construct();
     }
@@ -19,7 +24,7 @@ class IncreaseBalanceJob extends BillingJob
     public function handle(): void
     {
         try {
-            (new IncreaseBalance($this->request))->execute();
+            (new IncreaseBalance($this->operationId, $this->target, $this->amount, $this->description))->execute();
             $this->registerCompletedEvent();
         } catch (AmountMustBeMoreThan0|NotUniqueOperationId $exception) {
             $this->registerFailedEvent($exception);
@@ -29,18 +34,18 @@ class IncreaseBalanceJob extends BillingJob
     private function registerCompletedEvent()
     {
         event(new EBalanceIncreaseCompleted(
-            $this->request->getOperationId(),
-            $this->request->getTarget(),
-            $this->request->getAmount()
+            $this->operationId,
+            $this->target,
+            $this->amount
         ));
     }
 
     private function registerFailedEvent(AmountMustBeMoreThan0|NotUniqueOperationId $exception)
     {
         event(new EBalanceIncreaseFailed(
-            $this->request->getOperationId(),
-            $this->request->getTarget(),
-            $this->request->getAmount(),
+            $this->operationId,
+            $this->target,
+            $this->amount,
             $exception
         ));
     }

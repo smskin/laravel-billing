@@ -2,16 +2,16 @@
 
 namespace SMSkin\Billing\Controllers;
 
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use SMSkin\Billing\Actions\CreateTransferOperation;
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
 use SMSkin\Billing\Exceptions\RecipientIsSender;
-use SMSkin\Billing\Requests\TransferToMultipleRecipientsRequest;
-use SMSkin\Billing\Requests\CreateTransferOperationRequest;
-use SMSkin\Billing\Requests\Models\Payment;
-use Illuminate\Database\UniqueConstraintViolationException;
-use Illuminate\Support\Str;
+use SMSkin\Billing\Models\Payment;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 use SMSkin\LaravelSupport\Traits\RedisMutexTrait;
 
@@ -19,7 +19,14 @@ class TransferToMultipleRecipients
 {
     use RedisMutexTrait;
 
-    public function __construct(protected TransferToMultipleRecipientsRequest $request)
+    /**
+     * @param Billingable $sender
+     * @param Collection<Payment> $payments
+     */
+    public function __construct(
+        private readonly Billingable $sender,
+        private readonly Collection $payments
+    )
     {
     }
 
@@ -32,7 +39,7 @@ class TransferToMultipleRecipients
      */
     public function execute(): void
     {
-        $mutex = $this->createMutex($this->request->getSender()->getIdentityHash());
+        $mutex = $this->createMutex($this->sender->getIdentityHash());
         try {
             $this->process();
         } finally {
@@ -65,7 +72,7 @@ class TransferToMultipleRecipients
      */
     private function checkBalance(float $amount): void
     {
-        $balance = $this->request->getSender()->getBalance();
+        $balance = $this->sender->getBalance();
         if ($balance < $amount) {
             throw new InsufficientBalance($balance, $amount);
         }
@@ -73,11 +80,7 @@ class TransferToMultipleRecipients
 
     private function createBillingOperations(): void
     {
-        (new CreateTransferOperation(
-            (new CreateTransferOperationRequest)
-                ->setSender($this->request->getSender())
-                ->setPayments($this->request->getPayments())
-        ))->execute();
+        (new CreateTransferOperation($this->sender, $this->payments))->execute();
     }
 
     /**
@@ -85,9 +88,8 @@ class TransferToMultipleRecipients
      */
     private function checkSubjects(): void
     {
-        $sender = $this->request->getSender();
-        $this->request->getPayments()->each(static function (Payment $payment) use ($sender) {
-            if ($sender->isEqual($payment->getRecipient())) {
+        $this->payments->each(function (Payment $payment) {
+            if ($this->sender->isEqual($payment->getRecipient())) {
                 throw new RecipientIsSender;
             }
         });
@@ -102,7 +104,7 @@ class TransferToMultipleRecipients
             throw new AmountMustBeMoreThan0($amount);
         }
 
-        $this->request->getPayments()->each(static function (Payment $payment) {
+        $this->payments->each(static function (Payment $payment) {
             $amount = $payment->getAmount();
             if ($amount <= 0) {
                 throw new AmountMustBeMoreThan0($amount);
@@ -112,7 +114,7 @@ class TransferToMultipleRecipients
 
     private function getTotalAmount(): float
     {
-        return $this->request->getPayments()->sum(static function (Payment $payment) {
+        return $this->payments->sum(static function (Payment $payment) {
             return $payment->getAmount();
         });
     }

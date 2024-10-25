@@ -3,10 +3,10 @@
 namespace SMSkin\Billing\Controllers;
 
 use SMSkin\Billing\Actions\CreateDecreaseBalanceOperation;
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
-use SMSkin\Billing\Requests\BalanceOperationRequest;
 use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\LaravelSupport\Exceptions\MutexException;
 use SMSkin\LaravelSupport\Traits\RedisMutexTrait;
@@ -15,7 +15,12 @@ class DecreaseBalance
 {
     use RedisMutexTrait;
 
-    public function __construct(protected BalanceOperationRequest $request)
+    public function __construct(
+        private readonly string $operationId,
+        private readonly Billingable $target,
+        private readonly float $amount,
+        private readonly string|null $description
+    )
     {
     }
 
@@ -28,7 +33,7 @@ class DecreaseBalance
      */
     public function execute(): void
     {
-        $mutex = $this->createMutex($this->request->getTarget()->getIdentityHash());
+        $mutex = $this->createMutex($this->target->getIdentityHash());
         try {
             $this->process();
         } finally {
@@ -49,13 +54,18 @@ class DecreaseBalance
             $this->checkBalance();
             $this->createBillingOperation();
         } catch (UniqueConstraintViolationException $exception) {
-            throw new NotUniqueOperationId($this->request->getOperationId(), $exception);
+            throw new NotUniqueOperationId($this->operationId, $exception);
         }
     }
 
     private function createBillingOperation(): void
     {
-        (new CreateDecreaseBalanceOperation($this->request))->execute();
+        (new CreateDecreaseBalanceOperation(
+            $this->operationId,
+            $this->target,
+            $this->amount,
+            $this->description
+        ))->execute();
     }
 
     /**
@@ -63,10 +73,9 @@ class DecreaseBalance
      */
     private function checkBalance(): void
     {
-        $balance = $this->request->getTarget()->getBalance();
-        $amount = $this->request->getAmount();
-        if ($balance < $amount) {
-            throw new InsufficientBalance($balance, $amount);
+        $balance = $this->target->getBalance();
+        if ($balance < $this->amount) {
+            throw new InsufficientBalance($balance, $this->amount);
         }
     }
 
@@ -75,9 +84,8 @@ class DecreaseBalance
      */
     private function checkAmount(): void
     {
-        $amount = $this->request->getAmount();
-        if ($amount <= 0) {
-            throw new AmountMustBeMoreThan0($amount);
+        if ($this->amount <= 0) {
+            throw new AmountMustBeMoreThan0($this->amount);
         }
     }
 }

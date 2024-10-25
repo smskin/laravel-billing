@@ -3,14 +3,19 @@
 namespace SMSkin\Billing\Controllers;
 
 use SMSkin\Billing\Actions\CreateIncreaseBalanceOperation;
+use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
-use SMSkin\Billing\Requests\BalanceOperationRequest;
 use Illuminate\Database\UniqueConstraintViolationException;
 
 class IncreaseBalance
 {
-    public function __construct(protected BalanceOperationRequest $request)
+    public function __construct(
+        private readonly string $operationId,
+        private readonly Billingable $target,
+        private readonly float $amount,
+        private readonly string|null $description
+    )
     {
     }
 
@@ -24,13 +29,18 @@ class IncreaseBalance
             $this->checkAmount();
             $this->createBillingOperation();
         } catch (UniqueConstraintViolationException $exception) {
-            throw new NotUniqueOperationId($this->request->getOperationId(), $exception);
+            throw new NotUniqueOperationId($this->operationId, $exception);
         }
     }
 
     private function createBillingOperation(): void
     {
-        (new CreateIncreaseBalanceOperation($this->request))->execute();
+        (new CreateIncreaseBalanceOperation(
+            $this->operationId,
+            $this->target,
+            $this->amount,
+            $this->description
+        ))->execute();
     }
 
     /**
@@ -38,9 +48,8 @@ class IncreaseBalance
      */
     private function checkAmount(): void
     {
-        $amount = $this->request->getAmount();
-        if ($amount <= 0) {
-            throw new AmountMustBeMoreThan0($amount);
+        if ($this->amount <= 0) {
+            throw new AmountMustBeMoreThan0($this->amount);
         }
     }
 }

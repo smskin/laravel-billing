@@ -55,7 +55,6 @@ trait BillingableTrait
 
     public function getBalance(): float
     {
-        $result = $this->getBalanceQuery()->first();
-        return round($result->balance, config('billing . rounding . precision'), PHP_ROUND_HALF_DOWN);
+        return $this->getBalanceQuery()->first()->balance;
     }
 }
