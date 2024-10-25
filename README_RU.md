@@ -101,10 +101,7 @@ $balance = $user1->getBalance();
 ```php
 $account1 = new User1Own;
 $account2 = new User1Card;
-$balances = (new Billing)->getBalances(
-    (new GetBalancesRequest)
-        ->setAccounts(collect([$account1, $account2]))
-);
+$balances = (new Billing)->getBalances(collect([$account1, $account2]));
 ```
 ```php
 Illuminate\Support\Collection {#681
@@ -127,12 +124,7 @@ Illuminate\Support\Collection {#681
 
 ```php
 $user1 = new User1Own();
-(new Billing())->increaseBalance(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->increaseBalance(Str::uuid(), $user1, 100);
 ```
 
 При синхронном исполнении можно получить один из Exception:
@@ -141,12 +133,7 @@ $user1 = new User1Own();
 
 ```php
 $user1 = new User1Own();
-(new Billing())->increaseBalanceAsync(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->increaseBalanceAsync(Str::uuid(), $user1, 100);
 ```
 
 При асинхронном исполнении в EventBus будет отправлен один из эвентов:
@@ -160,12 +147,7 @@ $user1 = new User1Own();
 
 ```php
 $user1 = new User1Own();
-(new Billing())->decreaseBalance(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->decreaseBalance(Str::uuid(), $user1, 100);
 ```
 
 При синхронном исполнении можно получить один из Exception:
@@ -176,12 +158,7 @@ $user1 = new User1Own();
 
 ```php
 $user1 = new User1Own();
-(new Billing())->decreaseBalanceAsync(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->decreaseBalanceAsync(Str::uuid(), $user1, 100);
 ```
 
 При асинхронном исполнении предусмотрен рестарт через 5 секунд при получении MutexException.
@@ -198,13 +175,7 @@ $user1 = new User1Own();
 ```php
 $user1 = new User1();
 $user2 = new User2();
-(new Billing())->transfer(
-    (new TransferRequest())
-        ->setOperationId(Str::uuid())
-        ->setSender($user1)
-        ->setRecipient($user2)
-        ->setAmount(100)
-);
+(new Billing())->transfer(Str::uuid(), $user1, $user2, 100);
 ```
 
 При синхронном исполнении можно получить один из Exception:
@@ -235,20 +206,20 @@ $user2 = new User2();
 $user1 = new User1();
 $user2 = new User2();
 $user3 = new User3();
-(new Billing())->transferToMultipleRecipients(
-    (new TransferToMultipleRecipientsRequest())
-        ->setSender($user1)
-        ->setPayments(collect([
-            (new Payment())
-                ->setOperationId(\Str::uuid())
-                ->setRecipient($user2)
-                ->setAmount(50),
-            (new Payment())
-                ->setOperationId(Str::uuid())
-                ->setRecipient($user3)
-                ->setAmount(170)
-            ]))
-);
+(new Billing())
+            ->transferToMultipleRecipients(
+                $user1,
+                collect([
+                    (new Payment())
+                        ->setOperationId(\Str::uuid())
+                        ->setRecipient($user2)
+                        ->setAmount(50),
+                    (new Payment())
+                        ->setOperationId(Str::uuid())
+                        ->setRecipient($user3)
+                        ->setAmount(170)
+                ])
+            );
 ```
 
 При синхронном исполнении можно получить один из Exception:
@@ -270,9 +241,5 @@ $user3 = new User3();
 Метод генерации балансового отчета. В разработке.
 
 ```php
-$report = (new Billing)->createOperationsReport(
-    (new CreateOperationsReportRequest)
-        ->setPerPage(25)
-        ->setPage(1)
-);
+$report = (new Billing)->createOperationsReport(1, 25);
 ```

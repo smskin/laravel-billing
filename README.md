@@ -102,10 +102,7 @@ We have 2 accounts belonging to one user. For example, an account in the system 
 ```php
 $account1 = new User1Own;
 $account2 = new User1Card;
-$balances = (new Billing)->getBalances(
-    (new GetBalancesRequest)
-        ->setAccounts(collect([$account1, $account2]))
-);
+$balances = (new Billing)->getBalances(collect([$account1, $account2]));
 ```
 
 ```php
@@ -129,12 +126,7 @@ This method is necessary to replenish the entity's balance from outside the syst
 
 ```php
 $user1 = new User1Own();
-(new Billing())->increaseBalance(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->increaseBalance(Str::uuid(), $user1, 100);
 ```
 
 In synchronous execution, you may receive one of the Exceptions:
@@ -143,12 +135,7 @@ In synchronous execution, you may receive one of the Exceptions:
 
 ```php
 $user1 = new User1Own();
-(new Billing())->increaseBalanceAsync(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->increaseBalanceAsync(Str::uuid(), $user1, 100);
 ```
 In asynchronous execution, one of the events will be sent to the EventBus:
 - EBalanceIncreaseCompleted
@@ -161,12 +148,7 @@ This method is necessary to withdraw funds from the entity's balance in the syst
 
 ```php
 $user1 = new User1Own();
-(new Billing())->decreaseBalance(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->decreaseBalance(Str::uuid(), $user1, 100);
 ```
 
 In synchronous execution, you may receive one of the Exceptions:
@@ -177,12 +159,7 @@ In synchronous execution, you may receive one of the Exceptions:
 
 ```php
 $user1 = new User1Own();
-(new Billing())->decreaseBalanceAsync(
-    (new BalanceOperationRequest())
-        ->setOperationId(Str::uuid())
-        ->setTarget($user1)
-        ->setAmount(1000)
-);
+(new Billing())->decreaseBalanceAsync(Str::uuid(), $user1, 100);
 ```
 
 In asynchronous execution, a restart is provided after 5 seconds when MutexException is received.
@@ -199,13 +176,7 @@ This method is used to transfer funds from one entity's balance to another entit
 ```php
 $user1 = new User1();
 $user2 = new User2();
-(new Billing())->transfer(
-    (new TransferRequest())
-        ->setOperationId(Str::uuid())
-        ->setSender($user1)
-        ->setRecipient($user2)
-        ->setAmount(100)
-);
+(new Billing())->transfer(Str::uuid(), $user1, $user2, 100);
 ```
 
 In synchronous execution, you may receive one of the Exceptions:
@@ -235,20 +206,20 @@ With a single transaction, you need to send a payment to the recipient + withhol
 $user1 = new User1();
 $user2 = new User2();
 $user3 = new User3();
-(new Billing())->transferToMultipleRecipients(
-    (new TransferToMultipleRecipientsRequest())
-        ->setSender($user1)
-        ->setPayments(collect([
-            (new Payment())
-                ->setOperationId(\Str::uuid())
-                ->setRecipient($user2)
-                ->setAmount(50),
-            (new Payment())
-                ->setOperationId(Str::uuid())
-                ->setRecipient($user3)
-                ->setAmount(170)
-            ]))
-);
+(new Billing())
+            ->transferToMultipleRecipients(
+                $user1,
+                collect([
+                    (new Payment())
+                        ->setOperationId(\Str::uuid())
+                        ->setRecipient($user2)
+                        ->setAmount(50),
+                    (new Payment())
+                        ->setOperationId(Str::uuid())
+                        ->setRecipient($user3)
+                        ->setAmount(170)
+                ])
+            );
 ```
 
 In synchronous execution, you may receive one of the Exceptions:
@@ -270,9 +241,5 @@ Both events will pass the input attributes, and the EBulkTransferFailed event wi
 Method for generating a balance report. **Under development**.
 
 ```php
-$report = (new Billing)->createOperationsReport(
-    (new CreateOperationsReportRequest)
-        ->setPerPage(25)
-        ->setPage(1)
-);
+$report = (new Billing)->createOperationsReport(1, 25);
 ```
