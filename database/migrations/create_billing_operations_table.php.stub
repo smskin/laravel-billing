@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->uuid('operation_id')->unique();
             $table->string('sender')->nullable()->index();
             $table->string('recipient')->nullable()->index();
-            $table->decimal('amount', 18, config('billing.rounding.precision'));
+            $table->decimal('amount', 18, 2);
             $table->text('description')->nullable();
             $table->timestamps();
         });
