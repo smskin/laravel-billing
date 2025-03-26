@@ -1,6 +1,8 @@
 {
     "name": "smskin/laravel-billing",
     "description": "Billing module for laravel projects",
+    "license": "MIT",
+    "type": "library",
     "keywords": [
         "laravel",
         "billing"
@@ -12,8 +14,6 @@
         }
     ],
     "homepage": "https://github.com/smskin/laravel-billing",
-    "type": "library",
-    "license": "MIT",
     "require": {
         "php": "^8.1",
         "laravel/framework": "^8 || ^9 || ^10 || ^11 || ^12",
@@ -26,13 +26,8 @@
         "phpunit/phpunit": "^10.5",
         "vimeo/psalm": "^5.25"
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "SMSkin\\Billing\\Providers\\ServiceProvider"
-            ]
-        }
-    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "SMSkin\\Billing\\": "src/"
@@ -50,8 +45,13 @@
         },
         "sort-packages": true
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SMSkin\\Billing\\Providers\\ServiceProvider"
+            ]
+        }
+    },
     "scripts": {
         "analyze": "psalm",
         "check-style": [
