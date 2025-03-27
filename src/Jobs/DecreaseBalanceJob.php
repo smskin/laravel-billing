@@ -37,7 +37,7 @@ class DecreaseBalanceJob extends BillingJob
         } catch (InsufficientBalance|AmountMustBeMoreThan0|NotUniqueOperationId $exception) {
             $this->registerFailedEvent($exception);
         } catch (MutexException) {
-            self::dispatch()->delay(now()->addSeconds(5));
+            dispatch(new self($this->operationId, $this->target, $this->amount, $this->description))->delay(now()->addSeconds(5));
         }
     }
 
@@ -54,5 +54,15 @@ class DecreaseBalanceJob extends BillingJob
                 $exception instanceof InsufficientBalance => BalanceDecreaseFailedReasonEnum::INSUFFICIENT_BALANCE
             }
         ));
+    }
+
+    public function tags(): array
+    {
+        return [
+            $this->operationId,
+            $this->target->getBillingSubsystem(),
+            $this->target->getBillingType(),
+            $this->target->getBillingId(),
+        ];
     }
 }

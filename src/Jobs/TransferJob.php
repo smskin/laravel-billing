@@ -41,7 +41,7 @@ class TransferJob extends BillingJob
         } catch (AmountMustBeMoreThan0|InsufficientBalance|NotUniqueOperationId|RecipientIsSender $exception) {
             $this->registerFailedEvent($exception);
         } catch (MutexException) {
-            self::dispatch()->delay(now()->addSeconds(5));
+            dispatch(new self($this->operationId, $this->sender, $this->recipient, $this->amount, $this->allowCredit, $this->description))->delay(now()->addSeconds(5));
         }
     }
 
@@ -71,5 +71,18 @@ class TransferJob extends BillingJob
                 $exception instanceof RecipientIsSender => TransferFailedReasonEnum::RECIPIENT_IS_SENDER,
             }
         ));
+    }
+
+    public function tags(): array
+    {
+        return array_unique([
+            $this->operationId,
+            $this->sender->getBillingSubsystem(),
+            $this->sender->getBillingType(),
+            $this->sender->getBillingId(),
+            $this->recipient->getBillingSubsystem(),
+            $this->recipient->getBillingType(),
+            $this->recipient->getBillingId(),
+        ]);
     }
 }

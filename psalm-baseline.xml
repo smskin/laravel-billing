@@ -241,6 +241,7 @@
   <file src="src/Jobs/DecreaseBalanceJob.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[handle]]></code>
+      <code><![CDATA[tags]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="src/Jobs/IncreaseBalanceJob.php">
@@ -251,6 +252,7 @@
   <file src="src/Jobs/TransferJob.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[handle]]></code>
+      <code><![CDATA[tags]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="src/Jobs/TransferToMultipleRecipientsJob.php">
@@ -262,6 +264,7 @@
     </MissingTemplateParam>
     <PossiblyUnusedMethod>
       <code><![CDATA[handle]]></code>
+      <code><![CDATA[tags]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="src/Models/Balance.php">
