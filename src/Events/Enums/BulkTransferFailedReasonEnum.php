@@ -2,7 +2,7 @@
 
 namespace SMSkin\Billing\Events\Enums;
 
-enum FailedReasonEnum: int
+enum BulkTransferFailedReasonEnum: int
 {
     case AMOUNT_MUST_BE_MORE_THAN_0 = 1;
     case NOT_UNIQUE_OPERATION_ID = 2;
