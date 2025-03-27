@@ -2,11 +2,11 @@
 
 namespace SMSkin\Billing\Jobs;
 
-use Illuminate\Database\UniqueConstraintViolationException;
 use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Controllers\DecreaseBalance;
 use SMSkin\Billing\Events\EDecreaseBalanceCompleted;
 use SMSkin\Billing\Events\EDecreaseBalanceFailed;
+use SMSkin\Billing\Events\Enums\FailedReasonEnum;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
 use SMSkin\Billing\Exceptions\InsufficientBalance;
 use SMSkin\Billing\Exceptions\NotUniqueOperationId;
@@ -33,15 +33,24 @@ class DecreaseBalanceJob extends BillingJob
                 $this->target,
                 $this->amount
             ));
-        } catch (InsufficientBalance|AmountMustBeMoreThan0|UniqueConstraintViolationException|NotUniqueOperationId $exception) {
-            event(new EDecreaseBalanceFailed(
-                $this->operationId,
-                $this->target,
-                $this->amount,
-                $exception
-            ));
+        } catch (InsufficientBalance|AmountMustBeMoreThan0|NotUniqueOperationId $exception) {
+            $this->registerFailedEvent($exception);
         } catch (MutexException) {
             self::dispatch()->delay(now()->addSeconds(5));
         }
+    }
+
+    private function registerFailedEvent(NotUniqueOperationId|InsufficientBalance|AmountMustBeMoreThan0 $exception)
+    {
+        event(new EDecreaseBalanceFailed(
+            $this->operationId,
+            $this->target,
+            $this->amount,
+            match (true) {
+                $exception instanceof AmountMustBeMoreThan0 => FailedReasonEnum::AMOUNT_MUST_BE_MORE_THAN_0,
+                $exception instanceof NotUniqueOperationId => FailedReasonEnum::NOT_UNIQUE_OPERATION_ID,
+                $exception instanceof InsufficientBalance => FailedReasonEnum::INSUFFICIENT_BALANCE
+            }
+        ));
     }
 }

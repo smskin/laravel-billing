@@ -4,6 +4,7 @@ namespace SMSkin\Billing\Jobs;
 
 use SMSkin\Billing\Contracts\Billingable;
 use SMSkin\Billing\Controllers\Transfer;
+use SMSkin\Billing\Events\Enums\FailedReasonEnum;
 use SMSkin\Billing\Events\ETransferCompleted;
 use SMSkin\Billing\Events\ETransferFailed;
 use SMSkin\Billing\Exceptions\AmountMustBeMoreThan0;
@@ -61,7 +62,12 @@ class TransferJob extends BillingJob
             $this->sender,
             $this->recipient,
             $this->amount,
-            $exception
+            match (true) {
+                $exception instanceof AmountMustBeMoreThan0 => FailedReasonEnum::AMOUNT_MUST_BE_MORE_THAN_0,
+                $exception instanceof NotUniqueOperationId => FailedReasonEnum::NOT_UNIQUE_OPERATION_ID,
+                $exception instanceof InsufficientBalance => FailedReasonEnum::INSUFFICIENT_BALANCE,
+                $exception instanceof RecipientIsSender => FailedReasonEnum::RECIPIENT_IS_SENDER,
+            }
         ));
     }
 }

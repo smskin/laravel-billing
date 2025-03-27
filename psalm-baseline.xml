@@ -160,11 +160,6 @@
       <code><![CDATA[Collection<Payment>]]></code>
     </MissingTemplateParam>
   </file>
-  <file src="src/Database/BillingOperation.php">
-    <InvalidTemplateParam>
-      <code><![CDATA[BillingOperation]]></code>
-    </InvalidTemplateParam>
-  </file>
   <file src="src/Database/Casts/BillingableCast.php">
     <MissingTemplateParam>
       <code><![CDATA[CastsAttributes]]></code>
@@ -179,7 +174,7 @@
   </file>
   <file src="src/Events/EBalanceIncreaseFailed.php">
     <PossiblyUnusedProperty>
-      <code><![CDATA[$exception]]></code>
+      <code><![CDATA[$reason]]></code>
     </PossiblyUnusedProperty>
   </file>
   <file src="src/Events/EBulkTransfer.php">
@@ -202,7 +197,7 @@
       <code><![CDATA[Collection<Payment>]]></code>
     </MissingTemplateParam>
     <PossiblyUnusedProperty>
-      <code><![CDATA[$exception]]></code>
+      <code><![CDATA[$reason]]></code>
     </PossiblyUnusedProperty>
   </file>
   <file src="src/Events/EDecreaseBalance.php">
@@ -214,7 +209,7 @@
   </file>
   <file src="src/Events/EDecreaseBalanceFailed.php">
     <PossiblyUnusedProperty>
-      <code><![CDATA[$exception]]></code>
+      <code><![CDATA[$reason]]></code>
     </PossiblyUnusedProperty>
   </file>
   <file src="src/Events/ETransfer.php">
@@ -227,7 +222,7 @@
   </file>
   <file src="src/Events/ETransferFailed.php">
     <PossiblyUnusedProperty>
-      <code><![CDATA[$exception]]></code>
+      <code><![CDATA[$reason]]></code>
     </PossiblyUnusedProperty>
   </file>
   <file src="src/Exceptions/AmountMustBeMoreThan0.php">
