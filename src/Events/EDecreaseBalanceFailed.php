@@ -7,8 +7,8 @@ use SMSkin\Billing\Events\Enums\BalanceDecreaseFailedReasonEnum;
 
 class EDecreaseBalanceFailed extends EDecreaseBalance
 {
-    public function __construct(public string $operationId, public Billingable $target, public float $amount, public BalanceDecreaseFailedReasonEnum $reason)
+    public function __construct(public string $operationId, public Billingable $target, public float $amount, public string|null $description, public BalanceDecreaseFailedReasonEnum $reason)
     {
-        parent::__construct($this->operationId, $this->target, $this->amount);
+        parent::__construct($this->operationId, $this->target, $this->amount, $this->description);
     }
 }

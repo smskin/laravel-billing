@@ -168,6 +168,7 @@
   <file src="src/Events/EBalanceIncrease.php">
     <PossiblyUnusedProperty>
       <code><![CDATA[$amount]]></code>
+      <code><![CDATA[$description]]></code>
       <code><![CDATA[$operationId]]></code>
       <code><![CDATA[$target]]></code>
     </PossiblyUnusedProperty>
@@ -203,6 +204,7 @@
   <file src="src/Events/EDecreaseBalance.php">
     <PossiblyUnusedProperty>
       <code><![CDATA[$amount]]></code>
+      <code><![CDATA[$description]]></code>
       <code><![CDATA[$operationId]]></code>
       <code><![CDATA[$target]]></code>
     </PossiblyUnusedProperty>
@@ -215,6 +217,7 @@
   <file src="src/Events/ETransfer.php">
     <PossiblyUnusedProperty>
       <code><![CDATA[$amount]]></code>
+      <code><![CDATA[$description]]></code>
       <code><![CDATA[$operationId]]></code>
       <code><![CDATA[$recipient]]></code>
       <code><![CDATA[$sender]]></code>

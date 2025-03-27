@@ -7,8 +7,8 @@ use SMSkin\Billing\Events\Enums\TransferFailedReasonEnum;
 
 class ETransferFailed extends ETransfer
 {
-    public function __construct(public string $operationId, public Billingable $sender, public Billingable $recipient, public float $amount, public TransferFailedReasonEnum $reason)
+    public function __construct(public string $operationId, public Billingable $sender, public Billingable $recipient, public float $amount, public string|null $description, public TransferFailedReasonEnum $reason)
     {
-        parent::__construct($this->operationId, $this->sender, $this->recipient, $this->amount);
+        parent::__construct($this->operationId, $this->sender, $this->recipient, $this->amount, $this->description);
     }
 }

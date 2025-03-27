@@ -31,7 +31,8 @@ class DecreaseBalanceJob extends BillingJob
             event(new EDecreaseBalanceCompleted(
                 $this->operationId,
                 $this->target,
-                $this->amount
+                $this->amount,
+                $this->description
             ));
         } catch (InsufficientBalance|AmountMustBeMoreThan0|NotUniqueOperationId $exception) {
             $this->registerFailedEvent($exception);
@@ -46,6 +47,7 @@ class DecreaseBalanceJob extends BillingJob
             $this->operationId,
             $this->target,
             $this->amount,
+            $this->description,
             match (true) {
                 $exception instanceof AmountMustBeMoreThan0 => BalanceDecreaseFailedReasonEnum::AMOUNT_MUST_BE_MORE_THAN_0,
                 $exception instanceof NotUniqueOperationId => BalanceDecreaseFailedReasonEnum::NOT_UNIQUE_OPERATION_ID,

@@ -51,7 +51,8 @@ class TransferJob extends BillingJob
             $this->operationId,
             $this->sender,
             $this->recipient,
-            $this->amount
+            $this->amount,
+            $this->description
         ));
     }
 
@@ -62,6 +63,7 @@ class TransferJob extends BillingJob
             $this->sender,
             $this->recipient,
             $this->amount,
+            $this->description,
             match (true) {
                 $exception instanceof AmountMustBeMoreThan0 => TransferFailedReasonEnum::AMOUNT_MUST_BE_MORE_THAN_0,
                 $exception instanceof NotUniqueOperationId => TransferFailedReasonEnum::NOT_UNIQUE_OPERATION_ID,

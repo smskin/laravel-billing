@@ -7,7 +7,7 @@ use SMSkin\LaravelSupport\BaseEvent;
 
 abstract class EBalanceIncrease extends BaseEvent
 {
-    public function __construct(public string $operationId, public Billingable $target, public float $amount)
+    public function __construct(public string $operationId, public Billingable $target, public float $amount, public string|null $description)
     {
     }
 }
